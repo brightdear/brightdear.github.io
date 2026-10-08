@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.brightdear.gachigisang",
+      "sha256_cert_fingerprints": [
+        "C2:51:2E:3A:D4:DB:E5:C9:D2:BD:A8:69:8F:E9:7B:2C:57:E2:02:C5:83:33:72:38:00:C3:68:77:DF:9B:D1:B8"
+      ]
+    }
+  }
+]

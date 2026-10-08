@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가치기상 초대</title>
+<meta property="og:title" content="가치기상 그룹 초대">
+<meta property="og:description" content="다 같이 꺼야 내 알람도 꺼지는 알람. 친구가 기다리고 있어요.">
+<style>
+  :root { --bg:#111214; --fg:#f2f2f2; --dim:#9a9ca3; --accent:#3ddc84; --card:#1c1d21; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
+  main { max-width:420px; margin:0 auto; padding:40px 20px; }
+  h1 { font-size:28px; margin:0 0 6px; }
+  p { color:var(--dim); line-height:1.6; margin:0 0 20px; }
+  .code { font-size:40px; font-weight:800; letter-spacing:4px; text-align:center; background:var(--card); border-radius:16px; padding:22px 10px; margin:24px 0; }
+  .btn { display:block; text-align:center; text-decoration:none; font-weight:700; font-size:18px; border-radius:14px; padding:16px; margin:12px 0; }
+  .primary { background:var(--fg); color:var(--bg); }
+  .secondary { border:2px solid var(--fg); color:var(--fg); }
+  .note { font-size:13px; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>가치기상</h1>
+  <p>다 같이 꺼야 내 알람도 꺼지는 알람이에요. 친구가 그룹에 초대했어요.</p>
+
+  <div id="valid" class="hidden">
+    <div class="code" id="code"></div>
+    <a class="btn primary" id="open" href="#">앱에서 열기</a>
+    <a class="btn secondary" id="store" href="#">플레이 스토어에서 받기</a>
+    <a class="btn secondary hidden" id="tester" href="#">테스터로 참여하기</a>
+    <p class="note">앱이 없으면 설치한 뒤 처음 열 때 이 코드가 자동으로 들어가요. 안 들어가면 '코드로 들어가기'에 위 코드를 넣어 주세요.</p>
+  </div>
+
+  <div id="invalid" class="hidden">
+    <p>초대 링크가 잘못됐어요. 친구에게 링크를 다시 받아 주세요.</p>
+  </div>
+
+  <p class="note" id="ios" class="hidden"></p>
+</main>
+<script>
+  // 비공개 테스트 기간에는 플레이 콘솔의 테스트 참여 주소를 여기에 넣는다.
+  const TESTER_URL = "";
+  const PKG = "io.github.brightdear.gachigisang";
+
+  const raw = (new URLSearchParams(location.search).get("c") || "").trim().toUpperCase();
+  const code = /^[A-Z0-9]{6,10}$/.test(raw) ? raw : null;
+  const android = /Android/i.test(navigator.userAgent);
+
+  if (!code) {
+    document.getElementById("invalid").classList.remove("hidden");
+  } else {
+    const store = "https://play.google.com/store/apps/details?id=" + PKG + "&referrer=" + encodeURIComponent("c=" + code);
+    const intentUrl = "intent://join?c=" + code + "#Intent;scheme=gachigisang;package=" + PKG +
+      ";S.browser_fallback_url=" + encodeURIComponent(store) + ";end";
+    document.getElementById("valid").classList.remove("hidden");
+    document.getElementById("code").textContent = code;
+    document.getElementById("store").href = store;
+    document.getElementById("open").href = android ? intentUrl : "gachigisang://join?c=" + code;
+    if (TESTER_URL) {
+      const t = document.getElementById("tester");
+      t.href = TESTER_URL;
+      t.classList.remove("hidden");
+    }
+    // 카카오톡 같은 인앱 브라우저는 앱 링크를 따르지 않으므로, 안드로이드에서는 한 번 앱 열기를 시도한다.
+    if (android) setTimeout(function () { location.href = intentUrl; }, 400);
+    if (!android) document.getElementById("ios").textContent = "지금은 안드로이드 폰에서만 쓸 수 있어요.";
+  }
+</script>
+</body>
+</html>
